@@ -32,6 +32,9 @@ case class Some[+T](get: T) extends Option[T]
 case object None extends Option[Nothing]
 
 object Option {
+
+  def lift[T,U](f: T => U): Option[T] => Option[U] = _ map f
+
   // Ex. 4.2
   def mean(xs: Seq[Double]): Option[Double] = {
     if(xs.isEmpty) None
@@ -42,6 +45,12 @@ object Option {
     mean(xs).flatMap { m =>
       mean(xs.map(x => math.pow(x - m, 2)))
     }
+  }
+
+  // Ex. 4.3
+  def map2[T,U,V](x: Option[T], y: Option[U])(f: (T, U) => V): Option[V] = (x, y) match {
+    case (Some(x), Some(y)) => Some(f(x, y))
+    case _ => None
   }
 }
 
@@ -54,4 +63,5 @@ object OptionApp extends App {
   println(mean(xs))
   println(variance(xs))
 
+  println(map2(Some(1), Some(2))(_ + _))
 }
