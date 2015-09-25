@@ -1,3 +1,7 @@
+package ch04
+
+import scala.collection.immutable.List._
+
 sealed trait Option[+T] {
 
   // Ex. 4.1
@@ -52,6 +56,16 @@ object Option {
     case (Some(x), Some(y)) => Some(f(x, y))
     case _ => None
   }
+
+  // Ex. 4.4
+  def sequence[T](xs: List[Option[T]]): Option[List[T]] = {
+    def f(x: Option[T], v: Option[List[T]]): Option[List[T]] = (x, v) match {
+      case (_, None) => None
+      case (None, _) => None
+      case (Some(x), Some(xs)) => Some(x :: xs)
+    }
+    xs.foldRight[Option[List[T]]](Some(Nil))(f)
+  }
 }
 
 object OptionApp extends App {
@@ -64,4 +78,6 @@ object OptionApp extends App {
   println(variance(xs))
 
   println(map2(Some(1), Some(2))(_ + _))
+
+  println(sequence(List(Some(1), Some(2), Some(3), None)))
 }
